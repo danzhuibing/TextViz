@@ -3,7 +3,7 @@ import Workspace from "@/pages/Workspace";
 
 export default function App() {
   return (
-    <Router>
+    <Router basename="/TextViz">
       <Routes>
         <Route path="/" element={<Workspace />} />
       </Routes>
