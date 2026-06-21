@@ -7,6 +7,8 @@ const TOOL_LABELS: Record<string, string> = {
   write_section: "生成代码",
   render_and_review: "渲染评审",
   edit_section: "修改优化",
+  add_tasks: "添加任务",
+  update_task: "更新任务",
 };
 
 export function ToolCallCard({ toolCall }: { toolCall: ToolCall }) {
@@ -17,9 +19,11 @@ export function ToolCallCard({ toolCall }: { toolCall: ToolCall }) {
   try {
     const parsed = JSON.parse(toolCall.arguments || "{}");
     if (toolCall.name === "plan_design") argsPreview = `${parsed.title || ""} · ${parsed.sections?.length || 0} 个 section`;
-    else if (toolCall.name === "write_section") argsPreview = `section ${parsed.sectionId || ""}`;
+    else if (toolCall.name === "write_section") argsPreview = `section ${parsed.sectionId || ""} · ${parsed.html?.length || 0} 字符`;
     else if (toolCall.name === "edit_section") argsPreview = `section ${parsed.sectionId || ""} · ${parsed.changes || ""}`;
     else if (toolCall.name === "render_and_review") argsPreview = "渲染并截图评审";
+    else if (toolCall.name === "add_tasks") argsPreview = `${parsed.tasks?.length || 0} 个任务`;
+    else if (toolCall.name === "update_task") argsPreview = `${parsed.taskId || ""} → ${parsed.status || ""}`;
   } catch {
     argsPreview = toolCall.arguments.slice(0, 40);
   }

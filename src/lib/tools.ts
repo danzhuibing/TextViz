@@ -6,7 +6,7 @@ export const TOOL_DEFINITIONS = [
     function: {
       name: "plan_design",
       description:
-        "根据用户输入的文本，设计信息图的整体布局。将画布分为若干个 section，并决定每个 section 要展示的内容、布局方式和视觉类型。这是生成信息图的第一步。",
+        "根据用户输入的文本，设计信息图的整体布局。将画布分为若干个 section，并决定每个 section 要展示的内容、布局方式和视觉类型。这是生成信息图的第一步。注意：此工具只能在开始时调用一次，后续修改阶段不允许再调用。",
       parameters: {
         type: "object",
         properties: {
@@ -52,7 +52,7 @@ export const TOOL_DEFINITIONS = [
     type: "function" as const,
     function: {
       name: "render_and_review",
-      description: "渲染当前已生成的完整信息图 HTML，并截图交给 VLM 视觉模型进行 review。调用此工具后系统会返回 JSON 格式的评审意见。无需传参。",
+      description: "渲染当前已生成的完整信息图 HTML，并截图交给 VLM 视觉模型进行 review。调用此工具后系统会返回 JSON 格式的评审意见，其中 suggestion 字段包含精确的 HTML/CSS 修改方案。无需传参。",
       parameters: { type: "object", properties: {} },
     },
   },
@@ -60,15 +60,58 @@ export const TOOL_DEFINITIONS = [
     type: "function" as const,
     function: {
       name: "edit_section",
-      description: "根据 review 评审意见修改指定 section 的内容。可以调整配色、大小、字号、增删内容、调整 SVG 等。需要提供修改后的完整 section HTML。",
+      description:
+        "根据 review 评审意见修改指定 section 的内容。review 返回的 suggestion 会给出精确的修改方案（如「将 .title 的 font-size 从 24px 改为 32px」），请严格按照 suggestion 执行修改。需要提供修改后的完整 section HTML。",
       parameters: {
         type: "object",
         properties: {
           sectionId: { type: "string", description: "要修改的 section id" },
-          changes: { type: "string", description: "本次修改的说明" },
+          changes: { type: "string", description: "本次修改的说明，应精确对应 review 给出的 suggestion，如「将 .title font-size 从 24px 改为 32px」" },
           newHtml: { type: "string", description: "修改后的完整 section HTML 代码片段" },
         },
         required: ["sectionId", "changes", "newHtml"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "add_tasks",
+      description:
+        "批量添加任务到任务列表，用于追踪工作进度。在 plan_design 之后应立即调用此工具，将所有需要完成的工作记录为任务。每个任务应有清晰的描述。",
+      parameters: {
+        type: "object",
+        properties: {
+          tasks: {
+            type: "array",
+            description: "任务列表",
+            items: {
+              type: "object",
+              properties: {
+                id: { type: "string", description: "任务 id，如 t1, t2" },
+                description: { type: "string", description: "任务描述，如「为 section s1 生成标题区 HTML 代码」" },
+              },
+              required: ["id", "description"],
+            },
+          },
+        },
+        required: ["tasks"],
+      },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "update_task",
+      description:
+        "更新任务状态。开始执行任务时标记为 in_progress，完成时标记为 done。每次调用 write_section、edit_section 等工具前后都应更新对应任务的状态。",
+      parameters: {
+        type: "object",
+        properties: {
+          taskId: { type: "string", description: "要更新的任务 id" },
+          status: { type: "string", enum: ["in_progress", "done"], description: "新状态：in_progress（开始执行）或 done（已完成）" },
+        },
+        required: ["taskId", "status"],
       },
     },
   },

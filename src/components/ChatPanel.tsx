@@ -1,9 +1,11 @@
 import { useEffect, useRef } from "react";
-import { Settings, Plus, Sparkles } from "lucide-react";
+import { Settings, Plus, Sparkles, Terminal } from "lucide-react";
 import { useStore } from "@/store/useStore";
 import { OctopusLogo } from "./OctopusLogo";
 import { MessageBubble } from "./MessageBubble";
 import { ChatInput } from "./ChatInput";
+import { TaskList } from "./TaskList";
+import { WritingProgress } from "./WritingProgress";
 import type { AgentCallbacks } from "@/lib/agent";
 import { runAgent } from "@/lib/agent";
 
@@ -12,7 +14,7 @@ interface ChatPanelProps {
 }
 
 const STATUS_LABELS: Record<string, string> = {
-  idle: "", thinking: "思考中", calling_tool: "调用工具", rendering: "渲染中", reviewing: "评审中", done: "", error: "出错",
+  idle: "", thinking: "思考中", calling_tool: "调用工具", rendering: "渲染中", reviewing: "评审中", writing: "生成代码", done: "", error: "出错",
 };
 
 export function ChatPanel({ takeScreenshot }: ChatPanelProps) {
@@ -31,6 +33,14 @@ export function ChatPanel({ takeScreenshot }: ChatPanelProps) {
   const setPreviewHtml = useStore((s) => s.setPreviewHtml);
   const setAgentStatus = useStore((s) => s.setAgentStatus);
   const setIsGenerating = useStore((s) => s.setIsGenerating);
+  const tasks = useStore((s) => s.tasks);
+  const setTasks = useStore((s) => s.setTasks);
+  const addTasks = useStore((s) => s.addTasks);
+  const updateTask = useStore((s) => s.updateTask);
+  const clearTasks = useStore((s) => s.clearTasks);
+  const setWritingProgress = useStore((s) => s.setWritingProgress);
+  const setLogPanelOpen = useStore((s) => s.setLogPanelOpen);
+  const requestLogs = useStore((s) => s.requestLogs);
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const abortRef = useRef<AbortController | null>(null);
@@ -40,13 +50,14 @@ export function ChatPanel({ takeScreenshot }: ChatPanelProps) {
     const el = scrollContainerRef.current;
     if (!el) return;
     el.scrollTop = el.scrollHeight;
-  }, [conversation.messages]);
+  }, [conversation.messages, tasks]);
 
   const handleSend = async (text: string) => {
     if (isGenerating) return;
     if (!config.apiKey) { setConfigOpen(true); return; }
     userRequestRef.current = text;
     addMessage({ role: "user", content: text });
+    clearTasks();
     setIsGenerating(true);
     const controller = new AbortController();
     abortRef.current = controller;
@@ -59,6 +70,9 @@ export function ChatPanel({ takeScreenshot }: ChatPanelProps) {
       addToolCall: (messageId, tc) => addToolCallToMessage(messageId, { id: tc.id, name: tc.name, arguments: tc.arguments, status: tc.status }),
       updateToolCall, takeScreenshot,
       getUserRequest: () => userRequestRef.current,
+      getTasks: () => useStore.getState().tasks,
+      setTasks, addTasks, updateTask, clearTasks,
+      setWritingProgress,
     };
 
     try {
@@ -69,6 +83,7 @@ export function ChatPanel({ takeScreenshot }: ChatPanelProps) {
       setAgentStatus("error");
     } finally {
       setIsGenerating(false);
+      setWritingProgress(null);
       abortRef.current = null;
     }
   };
@@ -96,6 +111,18 @@ export function ChatPanel({ takeScreenshot }: ChatPanelProps) {
           </div>
         </div>
         <div className="flex items-center gap-1">
+          <button
+            onClick={() => setLogPanelOpen(!useStore.getState().logPanelOpen)}
+            title="请求日志"
+            className="relative w-8 h-8 rounded-lg flex items-center justify-center text-zinc-400 hover:text-white hover:bg-zinc-800/80 transition-colors"
+          >
+            <Terminal className="w-4 h-4" />
+            {requestLogs.length > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-brand-500 text-[8px] text-white flex items-center justify-center font-bold">
+                {requestLogs.length > 99 ? "99+" : requestLogs.length}
+              </span>
+            )}
+          </button>
           <button onClick={newConversation} disabled={isGenerating} title="新对话" className="w-8 h-8 rounded-lg flex items-center justify-center text-zinc-400 hover:text-white hover:bg-zinc-800/80 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
             <Plus className="w-4 h-4" />
           </button>
@@ -115,6 +142,8 @@ export function ChatPanel({ takeScreenshot }: ChatPanelProps) {
       <div ref={scrollContainerRef} className="flex-1 overflow-y-auto scroll-thin p-3 space-y-3">
         {conversation.messages.length === 0 && <EmptyState />}
         {conversation.messages.filter((m) => m.role !== "tool").map((m) => (<MessageBubble key={m.id} message={m} />))}
+        <WritingProgress />
+        <TaskList />
       </div>
 
       <ChatInput onSend={handleSend} onStop={handleStop} />

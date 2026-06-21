@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { AppConfig, Conversation, Message, DesignDoc, AgentStatus, ToolCall } from "@/types";
+import type { AppConfig, Conversation, Message, DesignDoc, AgentStatus, ToolCall, Task, RequestLog } from "@/types";
 
 const CONFIG_KEY = "textviz:config";
 const LAYOUT_KEY = "textviz:layout";
@@ -65,6 +65,22 @@ interface StoreState {
   setPreviewHtml: (html: string) => void;
   previewZoom: number;
   setPreviewZoom: (z: number) => void;
+  // Task 管理
+  tasks: Task[];
+  setTasks: (tasks: Task[]) => void;
+  addTask: (task: Task) => void;
+  addTasks: (tasks: Task[]) => void;
+  updateTask: (id: string, patch: Partial<Task>) => void;
+  clearTasks: () => void;
+  // 请求日志
+  requestLogs: RequestLog[];
+  addRequestLog: (log: RequestLog) => void;
+  clearRequestLogs: () => void;
+  logPanelOpen: boolean;
+  setLogPanelOpen: (v: boolean) => void;
+  // 写代码进度
+  writingProgress: { sectionId: string; chars: number; total: number | null } | null;
+  setWritingProgress: (p: { sectionId: string; chars: number; total: number | null } | null) => void;
 }
 
 function createEmptyConversation(): Conversation {
@@ -160,4 +176,20 @@ export const useStore = create<StoreState>((set, get) => ({
   setPreviewHtml: (html) => set({ previewHtml: html }),
   previewZoom: 1,
   setPreviewZoom: (z) => set({ previewZoom: z }),
+  // Task 管理
+  tasks: [],
+  setTasks: (tasks) => set({ tasks }),
+  addTask: (task) => set((s) => ({ tasks: [...s.tasks, task] })),
+  addTasks: (tasks) => set((s) => ({ tasks: [...s.tasks, ...tasks] })),
+  updateTask: (id, patch) => set((s) => ({ tasks: s.tasks.map((t) => (t.id === id ? { ...t, ...patch } : t)) })),
+  clearTasks: () => set({ tasks: [] }),
+  // 请求日志
+  requestLogs: [],
+  addRequestLog: (log) => set((s) => ({ requestLogs: [...s.requestLogs.slice(-99), log] })),
+  clearRequestLogs: () => set({ requestLogs: [] }),
+  logPanelOpen: false,
+  setLogPanelOpen: (v) => set({ logPanelOpen: v }),
+  // 写代码进度
+  writingProgress: null,
+  setWritingProgress: (p) => set({ writingProgress: p }),
 }));

@@ -76,4 +76,32 @@ export interface Conversation {
   updatedAt: number;
 }
 
-export type AgentStatus = "idle" | "thinking" | "calling_tool" | "rendering" | "reviewing" | "done" | "error";
+export type AgentStatus = "idle" | "thinking" | "calling_tool" | "rendering" | "reviewing" | "writing" | "done" | "error";
+
+// ===== Task 管理 =====
+export type TaskStatus = "pending" | "in_progress" | "done";
+
+export interface Task {
+  id: string;
+  description: string;
+  status: TaskStatus;
+  createdAt: number;
+  completedAt?: number;
+}
+
+// ===== 请求日志 =====
+export type RequestLogType = "llm" | "vlm";
+
+export interface RequestLog {
+  id: string;
+  timestamp: number;
+  type: RequestLogType;
+  url: string;
+  method: string;
+  headers: Record<string, string>;
+  requestBody: unknown;
+  status: number | null;
+  responseBody: string | null;
+  duration: number | null;
+  error?: string;
+}
