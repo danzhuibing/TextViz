@@ -149,7 +149,7 @@ npm run preview    # 本地预览生产构建
 
 ### 推荐模型
 
-- **LLM**（文本生成）：`Qwen/Qwen2.5-7B-Instruct` 或更强；Claude / GPT / Gemini 均可
+- **LLM**（文本生成）：`MiniMax/MiniMax-M3`（默认）或更强；Claude / GPT / Gemini 均可
 - **VLM**（视觉评审）：`Qwen/Qwen2.5-VL-7B-Instruct` 或任意视觉模型
 
 ---

@@ -149,7 +149,7 @@ Der Ordner `dist/` enthält reine statische HTML/JS/CSS-Dateien — überall ber
 
 ### Empfohlene Modelle
 
-- **LLM** (Textgenerierung): `Qwen/Qwen2.5-7B-Instruct` oder stärker; Claude/GPT/Gemini funktionieren alle
+- **LLM** (Textgenerierung): `MiniMax/MiniMax-M3` (Standard) oder stärker; Claude/GPT/Gemini funktionieren alle
 - **VLM** (visuelle Überprüfung): `Qwen/Qwen2.5-VL-7B-Instruct` oder ein beliebiges vision-fähiges Modell
 
 ---

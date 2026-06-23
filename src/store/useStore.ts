@@ -7,7 +7,7 @@ const LAYOUT_KEY = "textviz:layout";
 const DEFAULT_CONFIG: AppConfig = {
   baseUrl: "https://api.siliconflow.cn/v1",
   apiKey: "",
-  model: "Qwen/Qwen2.5-7B-Instruct",
+  model: "MiniMax/MiniMax-M3",
   maxTokens: 4096,
   maxTurn: 5,
   vlmBaseUrl: "https://api.siliconflow.cn/v1",

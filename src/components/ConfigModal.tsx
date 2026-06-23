@@ -49,8 +49,8 @@ export function ConfigModal() {
                   <button type="button" onClick={() => setShowKey((v) => !v)} className="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300">{showKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}</button>
                 </div>
               </Field>
-              <Field label="Model" hint="如 Qwen/Qwen2.5-7B-Instruct, gpt-4o-mini">
-                <input value={form.model} onChange={(e) => update({ model: e.target.value })} placeholder="Qwen/Qwen2.5-7B-Instruct" className="input" />
+              <Field label="Model" hint="如 MiniMax/MiniMax-M3, gpt-4o-mini">
+                <input value={form.model} onChange={(e) => update({ model: e.target.value })} placeholder="MiniMax/MiniMax-M3" className="input" />
               </Field>
               <div className="grid grid-cols-2 gap-3">
                 <Field label="Max Tokens">
