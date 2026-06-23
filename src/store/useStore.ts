@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { AppConfig, Conversation, Message, DesignDoc, AgentStatus, ToolCall, Task, RequestLog } from "@/types";
+import type { AppConfig, Conversation, Message, DesignDoc, AgentStatus, ToolCall, Task, RequestLog, SelectedElementInfo } from "@/types";
 
 const CONFIG_KEY = "textviz:config";
 const LAYOUT_KEY = "textviz:layout";
@@ -81,6 +81,11 @@ interface StoreState {
   // 写代码进度
   writingProgress: { sectionId: string; chars: number; total: number | null } | null;
   setWritingProgress: (p: { sectionId: string; chars: number; total: number | null } | null) => void;
+  // 预览编辑器
+  selectedElement: SelectedElementInfo | null;
+  setSelectedElement: (el: SelectedElementInfo | null) => void;
+  editPanelOpen: boolean;
+  setEditPanelOpen: (v: boolean) => void;
 }
 
 function createEmptyConversation(): Conversation {
@@ -192,4 +197,9 @@ export const useStore = create<StoreState>((set, get) => ({
   // 写代码进度
   writingProgress: null,
   setWritingProgress: (p) => set({ writingProgress: p }),
+  // 预览编辑器
+  selectedElement: null,
+  setSelectedElement: (el) => set({ selectedElement: el, editPanelOpen: !!el }),
+  editPanelOpen: false,
+  setEditPanelOpen: (v) => set({ editPanelOpen: v }),
 }));

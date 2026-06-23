@@ -89,6 +89,35 @@ export interface Task {
   completedAt?: number;
 }
 
+// ===== 预览编辑器 =====
+export interface SelectedElementInfo {
+  tagName: string;
+  textContent: string;
+  outerHTML: string;
+  isSVG: boolean;
+  styles: {
+    position: string;
+    left: string;
+    top: string;
+    width: string;
+    height: string;
+    color: string;
+    backgroundColor: string;
+    fontSize: string;
+    fontWeight: string;
+    textAlign: string;
+    margin: string;
+    padding: string;
+    border: string;
+    borderRadius: string;
+    display: string;
+    opacity: string;
+    lineHeight: string;
+    fontFamily: string;
+  };
+  rect: { left: number; top: number; width: number; height: number };
+}
+
 // ===== 请求日志 =====
 export type RequestLogType = "llm" | "vlm";
 
