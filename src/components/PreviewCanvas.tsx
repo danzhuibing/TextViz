@@ -68,8 +68,12 @@ export const PreviewCanvas = forwardRef<PreviewCanvasHandle, PreviewCanvasProps>
         // 从 iframe 同步最新 HTML 到 store（不触发 srcdoc 重置）
         const doc = iframe.contentDocument;
         if (doc) {
+          // 克隆并清理编辑器残留元素，避免污染导出的 HTML
+          const clone = doc.documentElement.cloneNode(true) as HTMLElement;
+          clone.querySelectorAll("#__tv-container, #__tv-editor-script, script#__tv-editor-script").forEach((el) => el.remove());
+          clone.querySelectorAll("[data-tv-id]").forEach((el) => el.removeAttribute("data-tv-id"));
           skipSrcDocRef.current = true;
-          setPreviewHtml("<!DOCTYPE html>\n" + doc.documentElement.outerHTML);
+          setPreviewHtml("<!DOCTYPE html>\n" + clone.outerHTML);
         }
       }
     };

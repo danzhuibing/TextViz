@@ -105,21 +105,34 @@ export const EDITOR_RUNTIME_SCRIPT = `
     return el && (el.tagName === 'svg' || (el.ownerSVGElement !== undefined) || el.tagName.toLowerCase() === 'svg');
   }
 
+  function getSelectionId(el) {
+    if (!el.dataset.tvId) {
+      el.dataset.tvId = 'tv-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8);
+    }
+    return el.dataset.tvId;
+  }
+
+  function buildSelectedPayload(el) {
+    var rect = el.getBoundingClientRect();
+    return {
+      selectionId: getSelectionId(el),
+      tagName: el.tagName.toLowerCase(),
+      textContent: el.textContent || '',
+      innerHTML: el.innerHTML,
+      outerHTML: el.outerHTML,
+      isSVG: el.tagName.toLowerCase() === 'svg',
+      styles: getRelevantStyles(el),
+      rect: { left: rect.left, top: rect.top, width: rect.width, height: rect.height }
+    };
+  }
+
   function selectElement(el) {
     if (isEditorEl(el)) return;
     if (!el || el === document.body || el === document.documentElement) return;
     selected = el;
     ensureContainer();
     positionOverlay();
-    var rect = el.getBoundingClientRect();
-    sendToParent('selected', {
-      tagName: el.tagName.toLowerCase(),
-      textContent: el.textContent || '',
-      outerHTML: el.outerHTML,
-      isSVG: el.tagName.toLowerCase() === 'svg',
-      styles: getRelevantStyles(el),
-      rect: { left: rect.left, top: rect.top, width: rect.width, height: rect.height }
-    });
+    sendToParent('selected', buildSelectedPayload(el));
   }
 
   function deselect() {
@@ -217,15 +230,7 @@ export const EDITOR_RUNTIME_SCRIPT = `
     if (mode) {
       mode = null;
       if (selected) {
-        var rect = selected.getBoundingClientRect();
-        sendToParent('selected', {
-          tagName: selected.tagName.toLowerCase(),
-          textContent: selected.textContent || '',
-          outerHTML: selected.outerHTML,
-          isSVG: selected.tagName.toLowerCase() === 'svg',
-          styles: getRelevantStyles(selected),
-          rect: { left: rect.left, top: rect.top, width: rect.width, height: rect.height }
-        });
+        sendToParent('selected', buildSelectedPayload(selected));
         syncHtmlToParent();
       }
     }
@@ -288,6 +293,7 @@ export const EDITOR_RUNTIME_SCRIPT = `
       selected = img;
       ensureContainer();
       positionOverlay();
+      sendToParent('selected', buildSelectedPayload(img));
       syncHtmlToParent();
     }
   });

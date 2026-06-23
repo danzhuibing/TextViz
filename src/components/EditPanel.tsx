@@ -40,7 +40,7 @@ export function EditPanel({ onApplyStyle, onApplyText, onApplyHtml, onDelete, on
   };
 
   return (
-    <div className="absolute top-12 right-0 bottom-0 w-80 bg-white border-l border-zinc-200 shadow-xl flex flex-col z-20 animate-slide-up">
+    <div key={selected.selectionId} className="absolute top-12 right-0 bottom-0 w-80 bg-white border-l border-zinc-200 shadow-xl flex flex-col z-20 animate-slide-up">
       {/* Header */}
       <div className="shrink-0 flex items-center justify-between px-4 py-3 border-b border-zinc-200 bg-zinc-50">
         <div className="flex items-center gap-2 min-w-0">
@@ -88,7 +88,7 @@ export function EditPanel({ onApplyStyle, onApplyText, onApplyHtml, onDelete, on
           <Section icon={<Type className="w-3.5 h-3.5" />} title="内容">
             <textarea
               defaultValue={selected.textContent}
-              onBlur={(e) => onApplyText(e.target.value)}
+              onChange={(e) => onApplyText(e.target.value)}
               placeholder="输入文本内容…"
               rows={3}
               className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-2.5 py-2 text-xs text-zinc-800 placeholder:text-zinc-400 focus:outline-none focus:border-brand-400 focus:ring-1 focus:ring-brand-400/30 resize-none"
@@ -153,7 +153,7 @@ export function EditPanel({ onApplyStyle, onApplyText, onApplyHtml, onDelete, on
                 <input
                   type="text"
                   defaultValue={s.fontSize}
-                  onBlur={(e) => onApplyStyle({ fontSize: e.target.value })}
+                  onChange={(e) => onApplyStyle({ fontSize: e.target.value })}
                   className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-2 py-1.5 text-xs text-zinc-800 focus:outline-none focus:border-brand-400"
                 />
               </div>
@@ -175,7 +175,7 @@ export function EditPanel({ onApplyStyle, onApplyText, onApplyHtml, onDelete, on
               <input
                 type="text"
                 defaultValue={s.lineHeight}
-                onBlur={(e) => onApplyStyle({ lineHeight: e.target.value })}
+                onChange={(e) => onApplyStyle({ lineHeight: e.target.value })}
                 className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-2 py-1.5 text-xs text-zinc-800 focus:outline-none focus:border-brand-400"
               />
             </div>
@@ -217,7 +217,7 @@ export function EditPanel({ onApplyStyle, onApplyText, onApplyHtml, onDelete, on
                 <input
                   type="text"
                   defaultValue={s.margin}
-                  onBlur={(e) => onApplyStyle({ margin: e.target.value })}
+                  onChange={(e) => onApplyStyle({ margin: e.target.value })}
                   className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-2 py-1.5 text-xs text-zinc-800 focus:outline-none focus:border-brand-400"
                 />
               </div>
@@ -226,7 +226,7 @@ export function EditPanel({ onApplyStyle, onApplyText, onApplyHtml, onDelete, on
                 <input
                   type="text"
                   defaultValue={s.padding}
-                  onBlur={(e) => onApplyStyle({ padding: e.target.value })}
+                  onChange={(e) => onApplyStyle({ padding: e.target.value })}
                   className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-2 py-1.5 text-xs text-zinc-800 focus:outline-none focus:border-brand-400"
                 />
               </div>
@@ -237,7 +237,7 @@ export function EditPanel({ onApplyStyle, onApplyText, onApplyHtml, onDelete, on
                 <input
                   type="text"
                   defaultValue={s.borderRadius}
-                  onBlur={(e) => onApplyStyle({ borderRadius: e.target.value })}
+                  onChange={(e) => onApplyStyle({ borderRadius: e.target.value })}
                   className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-2 py-1.5 text-xs text-zinc-800 focus:outline-none focus:border-brand-400"
                 />
               </div>
@@ -249,7 +249,7 @@ export function EditPanel({ onApplyStyle, onApplyText, onApplyHtml, onDelete, on
                   min="0"
                   max="1"
                   defaultValue={num(s.opacity)}
-                  onBlur={(e) => onApplyStyle({ opacity: e.target.value })}
+                  onChange={(e) => onApplyStyle({ opacity: e.target.value })}
                   className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-2 py-1.5 text-xs text-zinc-800 focus:outline-none focus:border-brand-400"
                 />
               </div>
@@ -259,7 +259,7 @@ export function EditPanel({ onApplyStyle, onApplyText, onApplyHtml, onDelete, on
               <input
                 type="text"
                 defaultValue={s.border}
-                onBlur={(e) => onApplyStyle({ border: e.target.value })}
+                onChange={(e) => onApplyStyle({ border: e.target.value })}
                 placeholder="1px solid #ccc"
                 className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-2 py-1.5 text-xs text-zinc-800 focus:outline-none focus:border-brand-400"
               />
@@ -268,9 +268,9 @@ export function EditPanel({ onApplyStyle, onApplyText, onApplyHtml, onDelete, on
         </Section>
 
         {/* 自定义 HTML */}
-        <Section icon={<Type className="w-3.5 h-3.5" />} title="自定义 HTML">
+        <Section icon={<Type className="w-3.5 h-3.5" />} title="内部 HTML">
           <textarea
-            defaultValue={selected.outerHTML}
+            defaultValue={selected.innerHTML}
             onBlur={(e) => {
               try {
                 onApplyHtml(e.target.value);
@@ -280,9 +280,9 @@ export function EditPanel({ onApplyStyle, onApplyText, onApplyHtml, onDelete, on
             }}
             rows={4}
             className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-2.5 py-2 text-[11px] font-mono text-zinc-800 focus:outline-none focus:border-brand-400 focus:ring-1 focus:ring-brand-400/30 resize-none"
-            placeholder="<div>...</div>"
+            placeholder="<span>...</span>"
           />
-          <p className="text-[10px] text-zinc-400 mt-1">编辑后会替换选中元素的 innerHTML。</p>
+          <p className="text-[10px] text-zinc-400 mt-1">编辑后会替换选中元素的内部 HTML。</p>
         </Section>
       </div>
 
@@ -320,7 +320,7 @@ function NumField({ label, value, unit, onChange }: { label: string; value: stri
         <input
           type="number"
           defaultValue={value}
-          onBlur={(e) => onChange(e.target.value)}
+          onChange={(e) => onChange(e.target.value)}
           className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-2 py-1.5 text-xs text-zinc-800 focus:outline-none focus:border-brand-400 pr-6"
         />
         {unit && <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-zinc-400">{unit}</span>}
@@ -352,7 +352,7 @@ function ColorField({ label, value, onChange }: { label: string; value: string; 
         <input
           type="text"
           defaultValue={value}
-          onBlur={(e) => onChange(e.target.value)}
+          onChange={(e) => onChange(e.target.value)}
           className="flex-1 min-w-0 rounded-lg border border-zinc-200 bg-zinc-50 px-2 py-1.5 text-xs text-zinc-800 focus:outline-none focus:border-brand-400"
         />
         {isTransparent && (

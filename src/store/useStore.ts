@@ -113,7 +113,7 @@ export const useStore = create<StoreState>((set, get) => ({
     set({ leftPanelWidth: clamped });
   },
   conversation: createEmptyConversation(),
-  newConversation: () => set({ conversation: createEmptyConversation(), designDoc: null, previewHtml: "" }),
+  newConversation: () => set({ conversation: createEmptyConversation(), designDoc: null, previewHtml: "", tasks: [], selectedElement: null, editPanelOpen: false, agentStatus: "idle" }),
   addMessage: (msg) => {
     const id = uid();
     const full: Message = { ...msg, id, createdAt: Date.now() };

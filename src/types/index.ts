@@ -91,8 +91,10 @@ export interface Task {
 
 // ===== 预览编辑器 =====
 export interface SelectedElementInfo {
+  selectionId: string;
   tagName: string;
   textContent: string;
+  innerHTML: string;
   outerHTML: string;
   isSVG: boolean;
   styles: {
