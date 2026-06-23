@@ -83,8 +83,8 @@ export function ConfigModal() {
                   <button type="button" onClick={() => setShowVlmKey((v) => !v)} className="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300">{showVlmKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}</button>
                 </div>
               </Field>
-              <Field label="Model" hint="如 Qwen/Qwen2.5-VL-7B-Instruct, gpt-4o">
-                <input value={form.vlmModel} onChange={(e) => update({ vlmModel: e.target.value })} placeholder="Qwen/Qwen2.5-VL-7B-Instruct" className="input" />
+              <Field label="Model" hint="如 MiniMax/MiniMax-M3, gpt-4o">
+                <input value={form.vlmModel} onChange={(e) => update({ vlmModel: e.target.value })} placeholder="MiniMax/MiniMax-M3" className="input" />
               </Field>
             </div>
           </section>

@@ -149,8 +149,8 @@ The `dist/` folder is pure static HTML/JS/CSS — deploy it anywhere.
 
 ### Recommended models
 
-- **LLM** (text generation): `Qwen/Qwen2.5-7B-Instruct` or stronger; Claude/GPT/Gemini all work
-- **VLM** (visual review): `Qwen/Qwen2.5-VL-7B-Instruct` or any vision-capable model
+- **LLM** (text generation): `MiniMax/MiniMax-M3` (default) or stronger; Claude/GPT/Gemini all work
+- **VLM** (visual review): `MiniMax/MiniMax-M3` or any vision-capable model
 
 ---
 

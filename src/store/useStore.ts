@@ -12,7 +12,7 @@ const DEFAULT_CONFIG: AppConfig = {
   maxTurn: 5,
   vlmBaseUrl: "https://api.siliconflow.cn/v1",
   vlmApiKey: "",
-  vlmModel: "Qwen/Qwen2.5-VL-7B-Instruct",
+  vlmModel: "MiniMax/MiniMax-M3",
 };
 
 const DEFAULT_LAYOUT = { leftPanelWidth: 360 };
